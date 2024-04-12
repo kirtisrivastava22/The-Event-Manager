@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Group Chat</title>
+  <link rel="stylesheet" href="../public/css/chat.css">
+  <style>
+    /* Add your custom CSS styles here */
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .message .username {
+      font-weight: bold;
+      color: #333; /* Adjust color as needed */
+    }
+    .message .message-text {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Group Chat</h1>
+  </header>
+  <main>
+    <div id="chat-window">
+      <ul id="messages">
+        <% messages.forEach(message => { %>
+          <li class="message">
+            <span class="username"><%= message.username %>:</span>
+            <span class="message-text"><%= message.message_text %></span>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+  </main>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    var form = document.getElementById("form");
+    var input = document.getElementById("input");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (input.value) {
+        const userId = "<%= userId %>";
+        socket.emit("chat message", { userId: userId, message: input.value });
+        input.value = "";
+      }
+    });
+
+    socket.on("chat message", function(msg) {
+      var item = document.createElement("li");
+      item.className = "message";
+      var usernameSpan = document.createElement("span");
+      usernameSpan.className = "username";
+      usernameSpan.textContent = msg.username + ": ";
+      var messageSpan = document.createElement("span");
+      messageSpan.className = "message-text";
+      messageSpan.textContent = msg.message;
+      item.appendChild(usernameSpan);
+      item.appendChild(messageSpan);
+      document.getElementById("messages").appendChild(item);
+      // Scroll to the bottom of the chat window
+      document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight;
+    });
+  </script>
+</body>
+</html>

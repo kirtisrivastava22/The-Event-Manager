@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+
+<main class="container">
+
+<div class="container mt-5">
+  <h1>Notes</h1>
+
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-body">
+
+          <!-- Form for creating notes -->
+          <form action="/user/<%= userId %>/notes" method="POST">
+            <div class="form-group">
+              <label for="notes">Notes</label>
+              <input type="text" class="form-control" name="notes">
+            </div>
+            <button type="submit" class="btn btn-dark">Create Note</button>
+          </form>
+
+          <!-- Displaying existing notes -->
+          <% if(locals.notes){  %>
+            <% locals.notes.forEach(note => { %>
+             <div class="row">
+               <div class="col-sm-8">
+                 <div class="card">
+                   <div class="card-body"> <%=note.note_text %>       </div>
+                 </div>
+               </div>
+             </div>
+            <% });} %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+<%- include('partials/footer') %>
+
+
